@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Escena Three.js con Cubos</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Incluimos Three.js desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+    <script>
+        // Escena
+        const escena = new THREE.Scene();
+        escena.background = new THREE.Color('BLACK');
+        // Camara
+        let ancho = window.innerWidth;
+        let alto = window.innerHeight;
+        const camara = new THREE.PerspectiveCamera(70, ancho / alto, 0.1, 1000);
+        // Render
+        const renderizador = new THREE.WebGL1Renderer();
+        renderizador.setSize(ancho, alto);
+        document.body.appendChild(renderizador.domElement); // adjuntar al doc
+
+        // Función para convertir grados a radianes
+        function GradToRad(grad) {
+            return grad * Math.PI / 180;
+        }
+
+        // Posicionar camara
+        camara.position.set(1, 1, 5);
+        camara.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // Grupo para los cubos
+        const Grupo = new THREE.Group();
+        escena.add(Grupo);
+
+        const Cubo1 = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshNormalMaterial()
+        );
+        Grupo.add(Cubo1);
+
+        const Cubo2 = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshNormalMaterial()
+        );
+        Cubo2.position.x = 1.5;
+        Grupo.add(Cubo2);
+
+        const Cubo3 = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshNormalMaterial()
+        );
+        Cubo3.position.x = -1.5;
+        Grupo.add(Cubo3);
+
+        // Animación
+        function Update() {
+            requestAnimationFrame(Update);
+            Grupo.rotation.z += GradToRad(2);
+            Cubo1.rotation.x += GradToRad(0.5);
+            Cubo2.rotation.y += GradToRad(0.5);
+            Cubo3.rotation.z += GradToRad(0.5);
+            renderizador.render(escena, camara);
+        }
+
+        Update();
+
+        // Ajustar al cambiar el tamaño de ventana
+        window.addEventListener('resize', () => {
+            ancho = window.innerWidth;
+            alto = window.innerHeight;
+            camara.aspect = ancho / alto;
+            camara.updateProjectionMatrix();
+            renderizador.setSize(ancho, alto);
+        });
+    </script>
+</body>
+</html>
